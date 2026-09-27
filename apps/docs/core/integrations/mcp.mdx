@@ -114,6 +114,7 @@ Both the HTTP endpoint and stdio package expose the same tools:
 - Comments: `list_task_comments`, `create_task_comment`, `update_task_comment`, `delete_task_comment`
 - Labels: `list_workspace_labels`, `create_label`, `attach_label_to_task`, `detach_label_from_task`, `delete_label`
 - Task relations: `create_task_relation`, `get_task_relations`, `delete_task_relation`
+- Assets: `get_asset`
 
 Use `get_task_by_ticket_id` with a key such as `KAN-12` to fetch one task directly. If the same key identifies multiple accessible tasks, pass `workspaceId` or `projectId` to select one.
 
@@ -128,6 +129,11 @@ tools expect. Time entries have no delete endpoint on the API, so there is no
 `get_task_custom_field_values` for one task's values. `set_task_custom_field_value`
 takes a string, number, or boolean, an array of options for a multiselect field,
 or `null` to clear the value. Dates use `YYYY-MM-DD`.
+
+`get_asset` accepts an asset ID or the `/api/asset/<id>` URL found in task and
+comment content. Images come back as viewable image content; other file types
+come back as a base64 resource (or a direct-download hint when the file is over
+10 MiB). Private assets still require access to their workspace.
 
 ## Debugging
 
