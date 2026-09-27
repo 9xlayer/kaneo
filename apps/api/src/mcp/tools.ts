@@ -29,11 +29,11 @@ export function toMcpToolRegistrar(server: ShapeToolServer): McpToolRegistrar {
 class ApiClient {
   readonly usingApiKey = false;
   constructor(
-    private baseUrl: string,
+    readonly baseUrl: string,
     private token: string,
   ) {}
 
-  async json<T = unknown>(path: string, init?: RequestInit): Promise<T> {
+  private async request(path: string, init?: RequestInit): Promise<Response> {
     const headers = new Headers(init?.headers);
     headers.set("Authorization", `Bearer ${this.token}`);
     if (init?.body != null && !headers.has("Content-Type")) {
@@ -41,13 +41,22 @@ class ApiClient {
     }
 
     const url = `${this.baseUrl}${path.startsWith("/") ? path : `/${path}`}`;
-    const res = await fetch(url, {
+    return fetch(url, {
       ...init,
       headers,
       signal: init?.signal
         ? AbortSignal.any([init.signal, AbortSignal.timeout(10_000)])
         : AbortSignal.timeout(10_000),
     });
+  }
+
+  /** Returns the raw response for binary endpoints such as asset downloads. */
+  async raw(path: string, init?: RequestInit): Promise<Response> {
+    return this.request(path, init);
+  }
+
+  async json<T = unknown>(path: string, init?: RequestInit): Promise<T> {
+    const res = await this.request(path, init);
 
     const text = await res.text();
     let body: unknown = null;
