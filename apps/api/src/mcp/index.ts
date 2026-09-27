@@ -330,7 +330,11 @@ mcp.all("/mcp", async (c) => {
       maxRequestBodySize: MCP_BODY_BYTES,
     }))
   ) {
-    const modern = createModernMcpHandler(authResult.token, internalApiUrl);
+    const modern = createModernMcpHandler(
+      authResult.token,
+      internalApiUrl,
+      publicApiUrl,
+    );
     return modern.fetch(c.req.raw);
   }
 
@@ -340,7 +344,11 @@ mcp.all("/mcp", async (c) => {
     sessionIdGenerator: undefined,
     maxRequestBodySize: MCP_BODY_BYTES,
   });
-  const server = createMcpServerForUser(authResult.token, internalApiUrl);
+  const server = createMcpServerForUser(
+    authResult.token,
+    internalApiUrl,
+    publicApiUrl,
+  );
   await server.connect(transport);
   return transport.handleRequest(c.req.raw);
 });

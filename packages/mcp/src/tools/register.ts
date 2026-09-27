@@ -94,9 +94,10 @@ function oversizedAssetMessage(size: number): string {
 
 export function registerTools(
   server: ToolRegistrar,
-  ctx: { client: ToolClient },
+  ctx: { client: ToolClient; assetUrlBase?: string },
 ): void {
   const { client } = ctx;
+  const assetUrlBase = ctx.assetUrlBase ?? client.baseUrl ?? "";
   const registerTool = <S extends z.ZodObject>(
     name: string,
     config: { description: string; inputSchema: S },
@@ -1097,7 +1098,7 @@ export function registerTools(
             ),
             mimeType: normalizeContentType(res.headers.get("content-type")),
             size: bytes.byteLength,
-            url: `${client.baseUrl}/api/asset/${id}`,
+            url: `${assetUrlBase}/api/asset/${id}`,
           },
           bytes,
         );
