@@ -471,4 +471,44 @@ describe("MCP tool catalog", () => {
     expect(text).toContain("http://api.test/api/asset/big-stream");
     expect(text).not.toContain("KANEO_API_KEY");
   });
+
+  it("uploads an attachment to a task", async () => {
+    apiFetch
+      .mockResolvedValueOnce(
+        Response.json({
+          key: "asset-key-123",
+          uploadUrl: "http://storage.test/upload",
+        }),
+      )
+      .mockResolvedValueOnce(new Response(null, { status: 200 }))
+      .mockResolvedValueOnce(
+        Response.json({
+          id: "asset-id-456",
+          url: "http://api.test/api/asset/asset-id-456",
+        }),
+      );
+
+    const result = await call("upload_task_attachment", {
+      taskId: "cuid123",
+      fileBase64: Buffer.from("hello world").toString("base64"),
+      filename: "test.txt",
+    });
+
+    expect(result.isError).toBe(false);
+    expect(result.content[0]).toEqual({
+      type: "text",
+      text: JSON.stringify(
+        {
+          id: "asset-id-456",
+          filename: "test.txt",
+          contentType: "text/plain",
+          size: 11,
+          url: "http://api.test/api/asset/asset-id-456",
+          markdown: "[test.txt](http://api.test/api/asset/asset-id-456)",
+        },
+        null,
+        2,
+      ),
+    });
+  });
 });
