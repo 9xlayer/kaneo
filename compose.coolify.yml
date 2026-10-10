@@ -33,7 +33,7 @@ services:
     # Tracks the latest release. The API runs database migrations on startup, so
     # set KANEO_IMAGE_TAG to a release tag if a redeploy should stay on a known
     # version rather than pick up whatever is newest.
-    image: ghcr.io/usekaneo/kaneo:${KANEO_IMAGE_TAG:-latest}
+    image: ghcr.io/${KANEO_IMAGE_NAME:-9xlayer/kaneo}:${KANEO_IMAGE_TAG:-latest}
     environment:
       - KANEO_CLIENT_URL=${KANEO_CLIENT_URL:?}
       - AUTH_SECRET=${SERVICE_HEX_64_KANEO:?}
