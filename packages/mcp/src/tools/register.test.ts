@@ -47,6 +47,11 @@ describe("registerTools", () => {
       expect.any(Object),
       expect.any(Function),
     );
+    expect(server.registerTool).toHaveBeenCalledWith(
+      "upload_task_attachment",
+      expect.any(Object),
+      expect.any(Function),
+    );
   });
 
   it("uses the API-key current-user endpoint for whoami", async () => {
