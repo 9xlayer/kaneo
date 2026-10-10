@@ -1,3 +1,6 @@
+/// <reference types="node" />
+import { Buffer } from "node:buffer";
+import type { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
 import {
   afterEach,
   beforeEach,
@@ -11,18 +14,7 @@ import {
   registerMcpTools,
 } from "../../apps/api/src/mcp/tools";
 
-type ToolContent =
-  | { type: "text"; text: string }
-  | { type: "image"; data: string; mimeType: string }
-  | {
-      type: "resource";
-      resource: { uri: string; mimeType?: string; blob: string };
-    };
-
-type ToolCallback = (args: unknown) => Promise<{
-  content: ToolContent[];
-  isError?: boolean;
-}>;
+type ToolCallback = (args: unknown) => Promise<CallToolResult>;
 
 function bodyFromChunks(chunks: Uint8Array[]): ReadableStream<Uint8Array> {
   return new ReadableStream({
@@ -277,7 +269,9 @@ describe("MCP tool catalog", () => {
     const result = await call("delete_task", { taskId: "missing" });
 
     expect(result.isError).toBe(true);
-    expect(result.content[0].text).toContain("Task not found");
+    const [content] = result.content;
+    const text = content && "text" in content ? content.text : "";
+    expect(text).toContain("Task not found");
   });
 
   it("downloads an image asset as image content", async () => {

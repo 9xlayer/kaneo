@@ -1,3 +1,8 @@
+/// <reference types="node" />
+import { Buffer } from "node:buffer";
+import { writeFile, unlink } from "node:fs/promises";
+import { tmpdir } from "node:os";
+import path from "node:path";
 import {
   afterEach,
   beforeEach,
@@ -6,14 +11,11 @@ import {
   it,
   vi,
 } from "vite-plus/test";
-import { writeFile, unlink } from "node:fs/promises";
-import path from "node:path";
-import { tmpdir } from "node:os";
-import {
-  uploadTaskAttachment,
-  inferMimeType,
-} from "./upload-task-attachment.js";
 import type { ToolClient } from "./register.js";
+import {
+  inferMimeType,
+  uploadTaskAttachment,
+} from "./upload-task-attachment.js";
 
 describe("uploadTaskAttachment", () => {
   let mockClient: ToolClient;
@@ -24,6 +26,7 @@ describe("uploadTaskAttachment", () => {
     await writeFile(testFilePath, Buffer.from("fake-png-content"));
 
     mockClient = {
+      raw: vi.fn() as unknown as ToolClient["raw"],
       json: vi.fn(async (url: string, init?: RequestInit) => {
         if (url.includes("/api/task/by-ticket-id/")) {
           return { id: "resolved-cuid-123" };
@@ -42,7 +45,7 @@ describe("uploadTaskAttachment", () => {
           };
         }
         throw new Error(`Unexpected url: ${url}`);
-      }),
+      }) as unknown as ToolClient["json"],
     };
 
     // Mock global fetch for S3 upload
