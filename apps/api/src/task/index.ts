@@ -65,6 +65,7 @@ import updateTaskPriority from "./controllers/update-task-priority";
 import updateTaskRecurrence from "./controllers/update-task-recurrence";
 import updateTaskStatus from "./controllers/update-task-status";
 import updateTaskTitle from "./controllers/update-task-title";
+import uploadTaskAttachment from "./controllers/upload-task-attachment";
 import {
   getDeferredDescriptionMatches,
   getDescriptionPage,
@@ -79,6 +80,7 @@ import {
   finalizedAssetSchema,
   imageUploadSchema,
   moveTaskResultSchema,
+  taskAttachmentUploadResponseSchema,
   taskByTicketIdSchema,
   taskExportSchema,
   taskImportResultSchema,
@@ -767,6 +769,94 @@ const finalizeTaskImageUploadRoute = createRoute({
   },
 });
 
+const uploadTaskAttachmentRoute = createRoute({
+  method: "post",
+  operationId: "uploadTaskAttachment",
+  path: "/attachment/{id}",
+  tags: ["Tasks"],
+  summary: "Upload task attachment",
+  description:
+    "Upload a file or image attachment directly to a task using multipart/form-data. Accepts a task ID or ticket ID (e.g. KAN-12).",
+  middleware: [
+    workspaceAccess.fromTask(),
+    requireWorkspacePermission({ task: ["update"] }),
+    requireEntitlement,
+  ] as const,
+  request: {
+    params: taskParam,
+    body: {
+      required: true,
+      content: {
+        "multipart/form-data": {
+          schema: z.object({
+            file: z.any().openapi({
+              type: "string",
+              format: "binary",
+              description: "The file to upload",
+            }),
+            surface: z.enum(["description", "comment"]).optional().openapi({
+              description: "Where the asset is scoped (default: description)",
+            }),
+          }),
+        },
+      },
+    },
+  },
+  responses: {
+    200: jsonResponse("The stored asset", taskAttachmentUploadResponseSchema),
+    400: errorResponse("Invalid upload or file too large"),
+    403: errorResponse(
+      "No access to the project, or missing task:update permission",
+    ),
+    404: errorResponse("Task not found"),
+    503: errorResponse("Image uploads are not configured on this instance"),
+  },
+});
+
+const uploadTaskAttachmentAliasRoute = createRoute({
+  method: "post",
+  operationId: "uploadTaskAttachmentAlias",
+  path: "/{id}/attachment",
+  tags: ["Tasks"],
+  summary: "Upload task attachment (alias)",
+  description:
+    "Upload a file or image attachment directly to a task using multipart/form-data. Alias for /attachment/{id}.",
+  middleware: [
+    workspaceAccess.fromTask(),
+    requireWorkspacePermission({ task: ["update"] }),
+    requireEntitlement,
+  ] as const,
+  request: {
+    params: taskParam,
+    body: {
+      required: true,
+      content: {
+        "multipart/form-data": {
+          schema: z.object({
+            file: z.any().openapi({
+              type: "string",
+              format: "binary",
+              description: "The file to upload",
+            }),
+            surface: z.enum(["description", "comment"]).optional().openapi({
+              description: "Where the asset is scoped (default: description)",
+            }),
+          }),
+        },
+      },
+    },
+  },
+  responses: {
+    200: jsonResponse("The stored asset", taskAttachmentUploadResponseSchema),
+    400: errorResponse("Invalid upload or file too large"),
+    403: errorResponse(
+      "No access to the project, or missing task:update permission",
+    ),
+    404: errorResponse("Task not found"),
+    503: errorResponse("Image uploads are not configured on this instance"),
+  },
+});
+
 const updateTaskDescriptionRoute = createRoute({
   method: "put",
   operationId: "updateTaskDescription",
@@ -1338,6 +1428,94 @@ const task = apiRouter<BaseVariables & { workspaceId: string }>()
       },
       200,
     );
+  })
+  .openapi(uploadTaskAttachmentRoute, async (c) => {
+    const { id } = c.req.valid("param");
+    const body = await c.req.parseBody();
+    const fileValue = body["file"];
+    const surfaceValue = body["surface"];
+
+    if (!fileValue || typeof fileValue === "string") {
+      throw new HTTPException(400, {
+        message: "A valid file is required in the 'file' field",
+      });
+    }
+
+    const file = fileValue as File;
+    const filename = file.name || "attachment";
+    const contentType = file.type || "application/octet-stream";
+    const arrayBuffer = await file.arrayBuffer();
+    const buffer = Buffer.from(arrayBuffer);
+    const size = buffer.byteLength;
+
+    const surface =
+      surfaceValue === "comment"
+        ? ("comment" as const)
+        : ("description" as const);
+
+    const apiBaseUrl = normalizeApiServerUrl(
+      process.env.KANEO_API_URL || new URL(c.req.url).origin,
+    );
+    const userId = c.get("userId");
+
+    const result = await uploadTaskAttachment({
+      taskIdOrTicket: id,
+      file: {
+        filename,
+        contentType,
+        size,
+        buffer,
+      },
+      surface,
+      userId,
+      apiBaseUrl,
+    });
+
+    return c.json(result, 200);
+  })
+  .openapi(uploadTaskAttachmentAliasRoute, async (c) => {
+    const { id } = c.req.valid("param");
+    const body = await c.req.parseBody();
+    const fileValue = body["file"];
+    const surfaceValue = body["surface"];
+
+    if (!fileValue || typeof fileValue === "string") {
+      throw new HTTPException(400, {
+        message: "A valid file is required in the 'file' field",
+      });
+    }
+
+    const file = fileValue as File;
+    const filename = file.name || "attachment";
+    const contentType = file.type || "application/octet-stream";
+    const arrayBuffer = await file.arrayBuffer();
+    const buffer = Buffer.from(arrayBuffer);
+    const size = buffer.byteLength;
+
+    const surface =
+      surfaceValue === "comment"
+        ? ("comment" as const)
+        : ("description" as const);
+
+    const apiBaseUrl = normalizeApiServerUrl(
+      process.env.KANEO_API_URL || new URL(c.req.url).origin,
+    );
+    const userId = c.get("userId");
+
+    const result = await uploadTaskAttachment({
+      taskIdOrTicket: id,
+      file: {
+        filename,
+        contentType,
+        size,
+        buffer,
+      },
+      surface,
+      userId,
+      apiBaseUrl,
+    });
+
+    return c.json(result, 200);
   })
   .openapi(updateTaskDescriptionRoute, async (c) => {
     const { id } = c.req.valid("param");

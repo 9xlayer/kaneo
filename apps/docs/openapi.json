@@ -1615,6 +1615,43 @@
           "tasks"
         ]
       },
+      "TaskAttachmentUploadResult": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "The stored asset ID."
+          },
+          "url": {
+            "type": "string",
+            "description": "Where the stored asset can be read back from."
+          },
+          "filename": {
+            "type": "string",
+            "description": "The stored filename."
+          },
+          "contentType": {
+            "type": "string",
+            "description": "The MIME content type."
+          },
+          "size": {
+            "type": "number",
+            "description": "File size in bytes."
+          },
+          "markdown": {
+            "type": "string",
+            "description": "Markdown snippet for referencing this asset in task descriptions or comments."
+          }
+        },
+        "required": [
+          "id",
+          "url",
+          "filename",
+          "contentType",
+          "size",
+          "markdown"
+        ]
+      },
       "Column": {
         "type": "object",
         "properties": {
@@ -13122,6 +13159,226 @@
           },
           "429": {
             "$ref": "#/components/responses/ApiKeyRateLimited"
+          }
+        }
+      }
+    },
+    "/task/attachment/{id}": {
+      "post": {
+        "operationId": "uploadTaskAttachment",
+        "tags": [
+          "Tasks"
+        ],
+        "summary": "Upload task attachment",
+        "description": "Upload a file or image attachment directly to a task using multipart/form-data. Accepts a task ID or ticket ID (e.g. KAN-12).",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "required": true,
+            "name": "id",
+            "in": "path"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "format": "binary",
+                    "description": "The file to upload"
+                  },
+                  "surface": {
+                    "type": "string",
+                    "enum": [
+                      "description",
+                      "comment"
+                    ],
+                    "description": "Where the asset is scoped (default: description)"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The stored asset",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TaskAttachmentUploadResult"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid upload or file too large",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid credentials",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "No access to the project, or missing task:update permission",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Task not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "429": {
+            "$ref": "#/components/responses/ApiKeyRateLimited"
+          },
+          "503": {
+            "description": "Image uploads are not configured on this instance",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/task/{id}/attachment": {
+      "post": {
+        "operationId": "uploadTaskAttachmentAlias",
+        "tags": [
+          "Tasks"
+        ],
+        "summary": "Upload task attachment (alias)",
+        "description": "Upload a file or image attachment directly to a task using multipart/form-data. Alias for /attachment/{id}.",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "required": true,
+            "name": "id",
+            "in": "path"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "format": "binary",
+                    "description": "The file to upload"
+                  },
+                  "surface": {
+                    "type": "string",
+                    "enum": [
+                      "description",
+                      "comment"
+                    ],
+                    "description": "Where the asset is scoped (default: description)"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The stored asset",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TaskAttachmentUploadResult"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid upload or file too large",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid credentials",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "No access to the project, or missing task:update permission",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Task not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "429": {
+            "$ref": "#/components/responses/ApiKeyRateLimited"
+          },
+          "503": {
+            "description": "Image uploads are not configured on this instance",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
           }
         }
       }
