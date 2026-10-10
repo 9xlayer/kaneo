@@ -3,6 +3,7 @@ import { z } from "zod";
 import { buildFullTaskUpdateBody } from "../kaneo/task-helpers.js";
 import { errorResult, textResult } from "../utils/mcp-result.js";
 import { getCurrentUser } from "./get-current-user.js";
+import { uploadTaskAttachment } from "./upload-task-attachment.js";
 
 export type ToolClient = {
   readonly usingApiKey?: boolean;
@@ -855,6 +856,43 @@ export function registerTools(
       run(() =>
         client.json(`/api/activity/${encodeURIComponent(args.taskId)}`),
       ),
+  );
+
+  registerTool(
+    "upload_task_attachment",
+    {
+      description:
+        "Upload a file or image attachment to a task from a local file path, remote URL, or base64 data. Returns the stored asset ID, public download URL, and markdown snippet.",
+      inputSchema: z.object({
+        taskId: nonEmptyString.describe("Task ID or ticket ID (e.g. KAN-12)"),
+        filePath: z
+          .string()
+          .optional()
+          .describe("Absolute or relative local file path to upload"),
+        fileUrl: z
+          .string()
+          .url()
+          .optional()
+          .describe("Remote URL to fetch and upload"),
+        fileBase64: z
+          .string()
+          .optional()
+          .describe("Base64-encoded file content"),
+        filename: z
+          .string()
+          .optional()
+          .describe("Original or target filename (optional if using filePath)"),
+        contentType: z
+          .string()
+          .optional()
+          .describe("MIME type (optional, inferred from extension if omitted)"),
+        surface: z
+          .enum(["description", "comment"])
+          .optional()
+          .describe("Where the asset is scoped (default: description)"),
+      }),
+    },
+    async (args) => run(() => uploadTaskAttachment(client, args)),
   );
 
   registerTool(
