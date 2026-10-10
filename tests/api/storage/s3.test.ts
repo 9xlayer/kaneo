@@ -1,4 +1,4 @@
-import { S3Client } from "@aws-sdk/client-s3";
+import { S3Client } from "../../../apps/api/node_modules/@aws-sdk/client-s3";
 import {
   afterEach,
   beforeEach,
@@ -25,6 +25,7 @@ import {
   parsePositiveInt,
   resolveS3Credentials,
   sanitizePathSegment,
+  uploadTaskAssetDirect,
   validateProjectBackgroundUploadInput,
   validateTaskAssetUploadInput,
   verifyTaskAssetUpload,
@@ -450,7 +451,7 @@ describe("S3 helpers", () => {
     process.env.S3_KEY_PREFIX = "kaneo-assets";
 
     const send = vi
-      .spyOn(S3Client.prototype, "send")
+      .spyOn(S3Client.prototype as any, "send")
       .mockResolvedValue(undefined as never);
 
     const key = await copyTaskAssetObject({
@@ -469,7 +470,7 @@ describe("S3 helpers", () => {
       /^kaneo-assets\/workspace\/workspace-1\/project\/project-1\/task\/task-2\/descriptions\/report-\d+-[a-z0-9]+\.png$/,
     );
 
-    const command = send.mock.calls[0]?.[0] as {
+    const command = send.mock.calls[0]?.[0] as unknown as {
       input: Record<string, string>;
     };
 
@@ -599,6 +600,49 @@ describe("S3 credential provider chain (IAM role)", () => {
     // SDK default provider chain (used for IAM roles) was applied.
     expect(searchParams.get("X-Amz-Credential")).toContain(ambientAccessKeyId);
     expect(searchParams.has("X-Amz-Signature")).toBe(true);
+  });
+
+  it("uploads task asset directly to S3 via uploadTaskAssetDirect", async () => {
+    process.env.S3_ENDPOINT = "https://storage.example.test";
+    process.env.S3_BUCKET = "kaneo";
+    process.env.S3_ACCESS_KEY_ID = "test-access-key";
+    process.env.S3_SECRET_ACCESS_KEY = "test-secret-key";
+    process.env.S3_REGION = "us-east-1";
+    process.env.S3_FORCE_PATH_STYLE = "true";
+    process.env.S3_KEY_PREFIX = "uploads";
+
+    const sendSpy = vi
+      .spyOn(S3Client.prototype as any, "send")
+      .mockResolvedValueOnce({} as any);
+
+    const buffer = Buffer.from("hello world");
+    const result = await uploadTaskAssetDirect(
+      {
+        workspaceId: "workspace-1",
+        projectId: "project-1",
+        taskId: "task-1",
+        surface: "description",
+        filename: "test.txt",
+        contentType: "text/plain",
+        size: buffer.length,
+      },
+      buffer,
+    );
+
+    expect(result.key).toMatch(
+      /^uploads\/workspace\/workspace-1\/project\/project-1\/task\/task-1\/descriptions\/test-/,
+    );
+    expect(sendSpy).toHaveBeenCalledTimes(1);
+    const command = sendSpy.mock.calls[0]?.[0] as unknown as {
+      input: Record<string, unknown>;
+    };
+    expect(command?.input).toMatchObject({
+      Bucket: "kaneo",
+      Key: result.key,
+      ContentType: "text/plain",
+      ContentLength: buffer.length,
+      Body: buffer,
+    });
   });
 });
 
