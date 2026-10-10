@@ -272,6 +272,30 @@ export const finalizedAssetSchema = z
   })
   .openapi("TaskImageAsset");
 
+export const taskAttachmentUploadResponseSchema = z
+  .object({
+    id: z.string().openapi({
+      description: "The stored asset ID.",
+    }),
+    url: z.string().openapi({
+      description: "Where the stored asset can be read back from.",
+    }),
+    filename: z.string().openapi({
+      description: "The stored filename.",
+    }),
+    contentType: z.string().openapi({
+      description: "The MIME content type.",
+    }),
+    size: z.number().openapi({
+      description: "File size in bytes.",
+    }),
+    markdown: z.string().openapi({
+      description:
+        "Markdown snippet for referencing this asset in task descriptions or comments.",
+    }),
+  })
+  .openapi("TaskAttachmentUploadResult");
+
 export const descriptionPageSchema = z
   .object({
     content: z.string(),

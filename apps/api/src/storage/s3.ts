@@ -392,6 +392,29 @@ export async function createTaskImageUploadUrl(
   };
 }
 
+export async function uploadTaskAssetDirect(
+  context: TaskImageUploadContext & { size: number },
+  body: Uint8Array | Buffer,
+): Promise<{ key: string }> {
+  validateTaskAssetUploadInput(context.contentType, context.size);
+  const config = getStorageConfig();
+  const client = getClient(config);
+  const rawKey = buildObjectKey(context);
+  const key = applyKeyPrefix(config.keyPrefix, rawKey);
+
+  const command = new PutObjectCommand({
+    Bucket: config.bucket,
+    Key: key,
+    ContentType: context.contentType,
+    ContentLength: context.size,
+    Body: body,
+  });
+
+  await client.send(command);
+
+  return { key };
+}
+
 export async function createProjectBackgroundUploadUrl(
   context: ProjectBackgroundUploadContext,
 ): Promise<ProjectBackgroundUploadUrl> {

@@ -35,6 +35,9 @@ RUN pnpm run build
 WORKDIR /app/packages/importers
 RUN pnpm run build
 
+WORKDIR /app/packages/mcp
+RUN pnpm run build
+
 WORKDIR /app/apps/api
 RUN pnpm run build
 
