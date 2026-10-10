@@ -1,6 +1,4 @@
-/// <reference types="node" />
 import { Buffer } from "node:buffer";
-import type { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
 import {
   afterEach,
   beforeEach,
@@ -14,7 +12,7 @@ import {
   registerMcpTools,
 } from "../../apps/api/src/mcp/tools";
 
-type ToolCallback = (args: unknown) => Promise<CallToolResult>;
+type ToolCallback = Parameters<McpToolRegistrar["registerTool"]>[2];
 
 function bodyFromChunks(chunks: Uint8Array[]): ReadableStream<Uint8Array> {
   return new ReadableStream({
