@@ -1,8 +1,9 @@
-import { and, eq, inArray } from "drizzle-orm";
+import { and, eq, inArray, sql } from "drizzle-orm";
 import type { Context, Next } from "hono";
 import { HTTPException } from "hono/http-exception";
 import db, { schema } from "../database";
 import { assertProjectAccess } from "../project-access/assert-project-access";
+import { TICKET_ID_PATTERN } from "../task/ticket-id";
 import { validateWorkspaceAccess } from "./validate-workspace-access";
 
 type LookupResource =
@@ -183,6 +184,14 @@ async function lookupScope(
     }
 
     case "task": {
+      const match = id.normalize("NFKC").match(TICKET_ID_PATTERN);
+      const condition = match
+        ? and(
+            eq(schema.taskTable.number, Number(match[2])),
+            sql`lower(${schema.projectTable.slug}) = lower(${match[1]})`,
+          )
+        : eq(schema.taskTable.id, id);
+
       const [task] = await db
         .select({
           workspaceId: schema.projectTable.workspaceId,
@@ -193,7 +202,7 @@ async function lookupScope(
           schema.projectTable,
           eq(schema.taskTable.projectId, schema.projectTable.id),
         )
-        .where(eq(schema.taskTable.id, id))
+        .where(condition)
         .limit(1);
       return task ?? null;
     }
