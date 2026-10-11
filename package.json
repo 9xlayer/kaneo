@@ -20,7 +20,10 @@
     "typecheck": "vp run -r typecheck",
     "prepare": "husky",
     "format": "vp fmt",
-    "build:dependencies": "vp run --filter \"@kaneo/*^...\" build"
+    "build:dependencies": "vp run --filter \"@kaneo/*^...\" build",
+    "docker:build": "docker build -f Dockerfile.kaneo -t ghcr.io/9xlayer/kaneo:latest .",
+    "docker:push": "docker push ghcr.io/9xlayer/kaneo:latest",
+    "docker:deploy": "pnpm docker:build && pnpm docker:push"
   },
   "devDependencies": {
     "@commitlint/cli": "^21.2.3",

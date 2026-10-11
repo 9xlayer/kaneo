@@ -50,11 +50,16 @@ type SearchGroup = {
 type SearchCommandMenuProps = {
   open: boolean;
   setOpen: (open: boolean) => void;
+  initialQuery?: string;
 };
 
-function SearchCommandMenu({ open, setOpen }: SearchCommandMenuProps) {
+function SearchCommandMenu({
+  open,
+  setOpen,
+  initialQuery,
+}: SearchCommandMenuProps) {
   const { t } = useTranslation();
-  const [query, setQuery] = useState("");
+  const [query, setQuery] = useState(initialQuery ?? "");
   const { data: workspace } = useActiveWorkspace();
   const navigate = useNavigate();
 
@@ -68,10 +73,14 @@ function SearchCommandMenu({ open, setOpen }: SearchCommandMenuProps) {
   });
 
   useEffect(() => {
-    if (!open) {
+    if (open) {
+      if (initialQuery !== undefined) {
+        setQuery(initialQuery);
+      }
+    } else {
       setQuery("");
     }
-  }, [open]);
+  }, [open, initialQuery]);
 
   const handleSelect = (item: SearchResultItem) => {
     setOpen(false);
@@ -183,7 +192,7 @@ function SearchCommandMenu({ open, setOpen }: SearchCommandMenuProps) {
   return (
     <CommandDialog open={open} onOpenChange={setOpen}>
       <CommandDialogPopup instant>
-        <Command items={groupedItems}>
+        <Command items={groupedItems} filter={null}>
           <CommandInput
             placeholder={t("navigation:search.inputPlaceholder")}
             value={query}
@@ -208,21 +217,32 @@ function SearchCommandMenu({ open, setOpen }: SearchCommandMenuProps) {
                     <CommandCollection>
                       {(item: SearchResultItem) => {
                         const Icon = getItemIcon(item.type);
+                        const ticketId =
+                          item.projectSlug && item.taskNumber !== undefined
+                            ? `${item.projectSlug}-${item.taskNumber}`
+                            : undefined;
                         return (
                           <CommandItem
                             key={`${item.type}-${item.id}`}
-                            value={`${item.title} ${item.description || ""} ${item.type} ${item.id}`}
+                            value={`${ticketId ? `${ticketId} ` : ""}${item.title} ${item.description || ""} ${item.type} ${item.id}`}
                             onClick={() => handleSelect(item)}
                             className="flex items-start gap-3 py-3"
                             aria-label={`${item.type}: ${item.title}`}
                           >
                             <Icon
-                              className="h-4 w-4 mt-0.5 text-muted-foreground flex-shrink-0"
+                              className="h-4 w-4 mt-0.5 text-muted-foreground shrink-0"
                               aria-hidden="true"
                             />
                             <div className="flex-1 min-w-0">
-                              <div className="font-medium text-sm truncate">
-                                {item.title}
+                              <div className="flex items-center gap-2">
+                                {ticketId && (
+                                  <span className="text-xs font-mono text-muted-foreground font-semibold shrink-0">
+                                    {ticketId}
+                                  </span>
+                                )}
+                                <div className="font-medium text-sm truncate">
+                                  {item.title}
+                                </div>
                               </div>
                               {item.description && (
                                 <div className="text-xs text-muted-foreground truncate mt-1">
