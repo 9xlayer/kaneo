@@ -1,8 +1,13 @@
 import { ShortcutKeys } from "@/components/shortcuts/shortcut-keys";
 import { useShortcutsPanelStore } from "@/components/shortcuts/shortcuts-panel-store";
 import { useLocation, useNavigate } from "@tanstack/react-router";
-import { ArrowDownIcon, ArrowUpIcon, CornerDownLeftIcon } from "lucide-react";
-import { Fragment, useCallback, useMemo, useState } from "react";
+import {
+  ArrowDownIcon,
+  ArrowUpIcon,
+  CornerDownLeftIcon,
+  Search,
+} from "lucide-react";
+import { Fragment, useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import SearchCommandMenu from "@/components/search-command-menu";
 import CreateTaskModal from "@/components/shared/modals/create-task-modal";
@@ -58,6 +63,7 @@ function CommandPalette() {
   const canCreateWorkspace =
     isAdmin || (config !== undefined && !config.disableWorkspaceCreation);
   const [open, setOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isCreateTaskOpen, setIsCreateTaskOpen] = useState(false);
   const [isCreateProjectOpen, setIsCreateProjectOpen] = useState(false);
@@ -175,6 +181,11 @@ function CommandPalette() {
     ],
   );
 
+  useEffect(() => {
+    if (!open) {
+      setSearchQuery("");
+    }
+  }, [open]);
   return (
     <>
       <CommandDialog open={open} onOpenChange={setOpen}>
@@ -182,10 +193,34 @@ function CommandPalette() {
           <Command items={groupedItems}>
             <CommandInput
               placeholder={t("navigation:commandPalette.inputPlaceholder")}
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
             />
             <CommandPanel>
               <CommandEmpty>
-                {t("navigation:commandPalette.empty")}
+                <div className="flex flex-col items-center justify-center p-4 text-center">
+                  <p className="text-sm text-muted-foreground mb-3">
+                    {t("navigation:commandPalette.empty")}
+                  </p>
+                  {searchQuery.trim() && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setOpen(false);
+                        setIsSearchOpen(true);
+                      }}
+                      className="flex items-center gap-2 px-3 py-1.5 text-xs font-medium rounded-md bg-secondary hover:bg-secondary/80 text-foreground transition-colors cursor-pointer"
+                    >
+                      <Search className="size-3.5" />
+                      <span>
+                        {t("navigation:commandPalette.searchFor", {
+                          defaultValue: 'Search for "{{query}}"',
+                          query: searchQuery.trim(),
+                        })}
+                      </span>
+                    </button>
+                  )}
+                </div>
               </CommandEmpty>
               <CommandList>
                 {(group: PaletteGroup, groupIndex: number) => (
@@ -251,7 +286,11 @@ function CommandPalette() {
         </CommandDialogPopup>
       </CommandDialog>
 
-      <SearchCommandMenu open={isSearchOpen} setOpen={setIsSearchOpen} />
+      <SearchCommandMenu
+        open={isSearchOpen}
+        setOpen={setIsSearchOpen}
+        initialQuery={searchQuery}
+      />
       <CreateTaskModal
         open={isCreateTaskOpen}
         projectId={projectIdFromRoute}

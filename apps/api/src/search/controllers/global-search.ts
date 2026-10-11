@@ -12,6 +12,7 @@ import { canAccessProject } from "../../project-access/can-access-project";
 import { projectAccessCondition } from "../../project-access/project-access-condition";
 import { escapeLikePattern } from "../like-pattern";
 import { TASK_SHORT_ID_PATTERN } from "../task-short-id";
+import { hasInstanceAdminRole } from "../../utils/instance-admin-role";
 
 type SearchParams = {
   query: string;
@@ -130,6 +131,14 @@ async function globalSearch(params: SearchParams): Promise<{
     return { results: [], totalCount: 0, searchQuery: query };
   }
 
+  const [currentUser] = await db
+    .select({ role: userTable.role })
+    .from(userTable)
+    .where(eq(userTable.id, resolvedUserId))
+    .limit(1);
+
+  const isInstanceAdmin = hasInstanceAdminRole(currentUser?.role);
+
   const userWorkspaces = await db
     .select({ workspaceId: workspaceUserTable.workspaceId })
     .from(workspaceUserTable)
@@ -140,26 +149,33 @@ async function globalSearch(params: SearchParams): Promise<{
     .filter(Boolean);
 
   if (
-    accessibleWorkspaceIds.length === 0 ||
-    (projectId && !(await canAccessProject(resolvedUserId, projectId)))
+    (!isInstanceAdmin && accessibleWorkspaceIds.length === 0) ||
+    (projectId &&
+      !isInstanceAdmin &&
+      !(await canAccessProject(resolvedUserId, projectId)))
   ) {
     return { results: [], totalCount: 0, searchQuery: query };
   }
 
   const results: SearchResult[] = [];
-  const searchPattern = `%${query.toLowerCase()}%`;
+  const normalizedQuery = query.trim().normalize("NFKC");
+  const searchPattern = `%${normalizedQuery.toLowerCase()}%`;
 
   const workspaceFilter = and(
     workspaceId
       ? eq(projectTable.workspaceId, workspaceId)
-      : inArray(projectTable.workspaceId, accessibleWorkspaceIds),
-    projectAccessCondition(resolvedUserId, projectTable.id),
+      : isInstanceAdmin
+        ? undefined
+        : inArray(projectTable.workspaceId, accessibleWorkspaceIds),
+    isInstanceAdmin
+      ? undefined
+      : projectAccessCondition(resolvedUserId, projectTable.id),
   );
 
   // Check if query matches short-id pattern (e.g. "DEP-23"). `generateProjectSlug`
   // normalizes to NFKC before it stores a key, so the query is normalized too,
   // or a decomposed "ПА-23" would never reach the stored composed form.
-  const shortIdMatch = query.normalize("NFKC").match(TASK_SHORT_ID_PATTERN);
+  const shortIdMatch = normalizedQuery.match(TASK_SHORT_ID_PATTERN);
 
   const shortIdNumber = Number(shortIdMatch?.[2]);
 
