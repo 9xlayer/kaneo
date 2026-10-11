@@ -338,7 +338,8 @@
 				"createFailed": "Gagal membuat ruang kerja"
 			},
 			"validation": {
-				"workspaceNameRequired": "Nama ruang kerja wajib diisi"
+				"workspaceNameRequired": "Nama ruang kerja wajib diisi",
+				"projectNameRequired": "Beri nama proyek pertama Anda"
 			},
 			"restrictedSubtitle": "Hanya administrator instance yang dapat membuat ruang kerja di sini. Minta undangan, lalu muat ulang halaman ini.",
 			"restrictedCheckInvitations": "Lihat undangan",
@@ -375,6 +376,31 @@
 				"usageSoloDescription": "Keep track of your own work",
 				"usageTeam": "My team",
 				"usageTeamDescription": "Plan and ship work together"
+			},
+			"projectName": "Proyek pertama Anda",
+			"projectNameDefault": "Proyek pertama saya",
+			"projectNameHint": "Kami akan menambahkan beberapa tugas awal untuk membantu Anda memulai.",
+			"starterTasks": {
+				"drag": {
+					"title": "Seret kartu ini ke kolom berikutnya",
+					"description": "Kartu berpindah dari kolom ke kolom seiring pekerjaan berjalan. Seret kartu ini ke kolom berikutnya, atau buka dan ubah statusnya."
+				},
+				"details": {
+					"title": "Buka tugas ini dan tambahkan subtugas",
+					"description": "Tugas bisa berisi deskripsi, subtugas, label, penanggung jawab, dan tenggat. Tambahkan subtugas ke tugas ini untuk mencobanya."
+				},
+				"invite": {
+					"title": "Undang tim Anda",
+					"description": "Kaneo bekerja paling baik jika semua orang ikut. Buka **Anggota** di bilah samping untuk mengundang orang lewat email."
+				},
+				"integrations": {
+					"title": "Hubungkan GitHub, GitLab, atau Gitea",
+					"description": "Sinkronkan issue dan pindahkan tugas secara otomatis saat pull request dibuka dan digabungkan. Atur di **Pengaturan proyek**."
+				},
+				"create": {
+					"title": "Buat tugas Anda sendiri",
+					"description": "Gunakan **+** di samping nama kolom, atau tekan **T** lalu **C**. Hapus tugas awal ini kapan pun Anda siap."
+				}
 			}
 		},
 		"profileSetup": {

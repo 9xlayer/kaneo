@@ -338,7 +338,8 @@
 				"createFailed": "Không thể tạo không gian làm việc"
 			},
 			"validation": {
-				"workspaceNameRequired": "Cần có tên không gian làm việc"
+				"workspaceNameRequired": "Cần có tên không gian làm việc",
+				"projectNameRequired": "Hãy đặt tên cho dự án đầu tiên của bạn"
 			},
 			"restrictedSubtitle": "Tại đây chỉ quản trị viên hệ thống mới có thể tạo không gian làm việc. Hãy xin lời mời rồi tải lại trang này.",
 			"restrictedCheckInvitations": "Xem lời mời",
@@ -375,6 +376,31 @@
 				"usageSoloDescription": "Keep track of your own work",
 				"usageTeam": "My team",
 				"usageTeamDescription": "Plan and ship work together"
+			},
+			"projectName": "Dự án đầu tiên của bạn",
+			"projectNameDefault": "Dự án đầu tiên của tôi",
+			"projectNameHint": "Chúng tôi sẽ thêm vài nhiệm vụ khởi đầu để giúp bạn làm quen.",
+			"starterTasks": {
+				"drag": {
+					"title": "Kéo thẻ này sang cột tiếp theo",
+					"description": "Các thẻ chuyển từ cột này sang cột khác khi công việc tiến triển. Kéo thẻ này sang cột tiếp theo, hoặc mở nó và đổi trạng thái."
+				},
+				"details": {
+					"title": "Mở nhiệm vụ này và thêm một nhiệm vụ con",
+					"description": "Một nhiệm vụ có thể có mô tả, nhiệm vụ con, nhãn, người phụ trách và hạn chót. Hãy thử thêm một nhiệm vụ con vào nhiệm vụ này."
+				},
+				"invite": {
+					"title": "Mời nhóm của bạn",
+					"description": "Kaneo hoạt động tốt nhất khi mọi người cùng tham gia. Mở **Thành viên** ở thanh bên để mời mọi người qua email."
+				},
+				"integrations": {
+					"title": "Kết nối GitHub, GitLab hoặc Gitea",
+					"description": "Đồng bộ issue và tự động chuyển nhiệm vụ khi pull request được mở và hợp nhất. Thiết lập trong **Cài đặt dự án**."
+				},
+				"create": {
+					"title": "Tạo nhiệm vụ của riêng bạn",
+					"description": "Dùng nút **+** cạnh tên cột, hoặc nhấn **T** rồi **C**. Xóa các nhiệm vụ khởi đầu này khi bạn đã sẵn sàng."
+				}
 			}
 		},
 		"profileSetup": {

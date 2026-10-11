@@ -338,7 +338,8 @@
 				"createFailed": "İş sahəsini yaratmaq alınmadı"
 			},
 			"validation": {
-				"workspaceNameRequired": "İş sahəsinin adı tələb olunur"
+				"workspaceNameRequired": "İş sahəsinin adı tələb olunur",
+				"projectNameRequired": "İlk layihənizə ad verin"
 			},
 			"restrictedSubtitle": "Burada yalnız instans administratoru iş sahəsi yarada bilər. Sizi dəvət etməsini xahiş edin, sonra bu səhifəni yeniləyin.",
 			"restrictedCheckInvitations": "Dəvətlərə bax",
@@ -376,6 +377,31 @@
 				"usageSoloDescription": "Keep track of your own work",
 				"usageTeam": "My team",
 				"usageTeamDescription": "Plan and ship work together"
+			},
+			"projectName": "İlk layihəniz",
+			"projectNameDefault": "İlk layihəm",
+			"projectNameHint": "Sizə yol göstərmək üçün bir neçə başlanğıc tapşırıq əlavə edəcəyik.",
+			"starterTasks": {
+				"drag": {
+					"title": "Bu kartı növbəti sütuna sürükləyin",
+					"description": "İş irəlilədikcə kartlar sütundan sütuna keçir. Bunu növbəti sütuna sürükləyin və ya açıb statusunu dəyişin."
+				},
+				"details": {
+					"title": "Bu tapşırığı açın və alt tapşırıq əlavə edin",
+					"description": "Tapşırıqda təsvir, alt tapşırıqlar, etiketlər, icraçı və son tarix ola bilər. Sınamaq üçün buna bir alt tapşırıq əlavə edin."
+				},
+				"invite": {
+					"title": "Komandanızı dəvət edin",
+					"description": "Kaneo hamı bir yerdə olanda daha yaxşı işləyir. İnsanları e-poçtla dəvət etmək üçün yan paneldə **Üzvlər** bölməsini açın."
+				},
+				"integrations": {
+					"title": "GitHub, GitLab və ya Gitea qoşun",
+					"description": "Issue-ları sinxronlaşdırın və pull request açılıb birləşdirildikdə tapşırıqları avtomatik köçürün. Bunu **Layihə parametrləri** bölməsində qurun."
+				},
+				"create": {
+					"title": "Öz tapşırığınızı yaradın",
+					"description": "Sütun adının yanındakı **+** düyməsindən istifadə edin və ya **T**, sonra **C** basın. Hazır olduqda bu başlanğıc tapşırıqları silin."
+				}
 			}
 		},
 		"profileSetup": {

@@ -338,7 +338,8 @@
 				"createFailed": "Creazione workspace fallita"
 			},
 			"validation": {
-				"workspaceNameRequired": "Il nome del workspace è obbligatorio"
+				"workspaceNameRequired": "Il nome del workspace è obbligatorio",
+				"projectNameRequired": "Dai un nome al tuo primo progetto"
 			},
 			"restrictedSubtitle": "Qui solo un amministratore dell'istanza può creare spazi di lavoro. Chiedi un invito e ricarica questa pagina.",
 			"restrictedCheckInvitations": "Controlla gli inviti",
@@ -377,6 +378,31 @@
 				"usageSoloDescription": "Keep track of your own work",
 				"usageTeam": "My team",
 				"usageTeamDescription": "Plan and ship work together"
+			},
+			"projectName": "Il tuo primo progetto",
+			"projectNameDefault": "Il mio primo progetto",
+			"projectNameHint": "Aggiungeremo alcune attività iniziali per aiutarti a orientarti.",
+			"starterTasks": {
+				"drag": {
+					"title": "Trascina questa scheda nella colonna successiva",
+					"description": "Le schede passano da una colonna all'altra man mano che il lavoro procede. Trascina questa nella colonna successiva, oppure aprila e cambia il suo stato."
+				},
+				"details": {
+					"title": "Apri questa attività e aggiungi una sottoattività",
+					"description": "Un'attività può avere una descrizione, sottoattività, etichette, un assegnatario e una scadenza. Aggiungi una sottoattività a questa per provare."
+				},
+				"invite": {
+					"title": "Invita il tuo team",
+					"description": "Kaneo funziona meglio quando ci sono tutti. Apri **Membri** nella barra laterale per invitare persone via email."
+				},
+				"integrations": {
+					"title": "Collega GitHub, GitLab o Gitea",
+					"description": "Sincronizza le issue e sposta le attività automaticamente quando le pull request vengono aperte e unite. Configuralo in **Impostazioni progetto**."
+				},
+				"create": {
+					"title": "Crea la tua attività",
+					"description": "Usa il **+** accanto al nome di una colonna, oppure premi **T** e poi **C**. Elimina queste attività iniziali quando vuoi."
+				}
 			}
 		},
 		"profileSetup": {

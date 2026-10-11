@@ -338,7 +338,8 @@
 				"createFailed": "Nie udało się utworzyć obszaru roboczego"
 			},
 			"validation": {
-				"workspaceNameRequired": "Nazwa obszaru roboczego jest wymagana"
+				"workspaceNameRequired": "Nazwa obszaru roboczego jest wymagana",
+				"projectNameRequired": "Nadaj nazwę swojemu pierwszemu projektowi"
 			},
 			"restrictedSubtitle": "Tutaj tylko administrator instancji może tworzyć przestrzenie robocze. Poproś o zaproszenie i odśwież tę stronę.",
 			"restrictedCheckInvitations": "Sprawdź zaproszenia",
@@ -378,6 +379,31 @@
 				"usageSoloDescription": "Keep track of your own work",
 				"usageTeam": "My team",
 				"usageTeamDescription": "Plan and ship work together"
+			},
+			"projectName": "Twój pierwszy projekt",
+			"projectNameDefault": "Mój pierwszy projekt",
+			"projectNameHint": "Dodamy kilka zadań na start, żeby łatwiej było się odnaleźć.",
+			"starterTasks": {
+				"drag": {
+					"title": "Przeciągnij tę kartę do następnej kolumny",
+					"description": "Karty przechodzą z kolumny do kolumny wraz z postępem pracy. Przeciągnij tę do następnej kolumny albo otwórz ją i zmień jej status."
+				},
+				"details": {
+					"title": "Otwórz to zadanie i dodaj podzadanie",
+					"description": "Zadanie może mieć opis, podzadania, etykiety, osobę przypisaną i termin. Dodaj podzadanie do tego zadania, żeby to wypróbować."
+				},
+				"invite": {
+					"title": "Zaproś swój zespół",
+					"description": "Kaneo działa najlepiej, gdy wszyscy są na pokładzie. Otwórz **Członkowie** na pasku bocznym, aby zaprosić osoby przez e-mail."
+				},
+				"integrations": {
+					"title": "Połącz GitHub, GitLab lub Gitea",
+					"description": "Synchronizuj issues i automatycznie przenoś zadania, gdy pull requesty są otwierane i scalane. Skonfiguruj to w **Ustawienia projektu**."
+				},
+				"create": {
+					"title": "Utwórz własne zadanie",
+					"description": "Użyj **+** obok nazwy kolumny albo naciśnij **T**, a potem **C**. Usuń te zadania na start, kiedy zechcesz."
+				}
 			}
 		},
 		"profileSetup": {

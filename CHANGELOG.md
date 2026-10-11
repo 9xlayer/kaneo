@@ -1,5 +1,21 @@
 ### Features
 
+- start new workspaces with a starter project: #1993
+
+### Bug Fixes
+
+- **cli:** reject checksums that are not SHA-256 digests: #1996
+
+### Documentation
+
+- **cli:** add npm as an install option: #1995
+
+### Credits
+
+Huge thanks to @andrejsshell for helping!
+
+### Features
+
 - **cli:** add an agent skill for the kaneo CLI: #1974
 - **cli:** install the CLI with a one-line script: #1971
 
